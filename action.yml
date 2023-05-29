@@ -1,17 +1,26 @@
-name: 'SWR镜像上传'
-description: '推送镜像到SWR镜像'
+name: 'pytest单元测试'
+description: '使用pytest框架自动下载代码并进行单元测试'
 inputs:
-  AK:
-    description: 'SWR长期AK'
+  python_version:
+    description: 'pyton版本'
     required: true
-  SK:
-    description: 'SWR长期SK'
-    required: true
+    default: 3.8
 
 runs:
   using: "composite"
   steps:
-    - run: printf "${{ inputs.AK }}" | openssl dgst -binary -sha256 -hmac "${{ inputs.SK }}" | od -An -vtx1 | sed 's/[ \n]//g' | sed 'N;s/\n//' >> login.key
-      shell: bash
-    - run: cat login.key | xargs docker login swr.cn-north-4.myhuaweicloud.com -u cn-north-4@${{ inputs.AK }} -p
-      shell: bash
+    - name: '代码下载'
+      uses: actions/checkout@v3
+      
+    - name: 'python安装'
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python_version }}
+        
+    - name: '依赖库安装'
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: '运行单元测试'
+      run: pytest
