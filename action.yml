@@ -37,5 +37,5 @@ runs:
     - name: '上传产物'
       uses: actions/upload-artifact@v3
       with:
-        name: '测试报告'
+        name: 'my-artifact'
         path: .report.json
