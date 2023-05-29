@@ -1,0 +1,17 @@
+name: 'SWR镜像上传'
+description: '推送镜像到SWR镜像'
+inputs:
+  AK:
+    description: 'SWR长期AK'
+    required: true
+  SK:
+    description: 'SWR长期SK'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: printf "${{ inputs.AK }}" | openssl dgst -binary -sha256 -hmac "${{ inputs.SK }}" | od -An -vtx1 | sed 's/[ \n]//g' | sed 'N;s/\n//' >> login.key
+      shell: bash
+    - run: cat login.key | xargs docker login swr.cn-north-4.myhuaweicloud.com -u cn-north-4@${{ inputs.AK }} -p
+      shell: bash
