@@ -6,6 +6,11 @@ inputs:
     required: true
     default: 3.8
 
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-id }}
+
 runs:
   using: "composite"
   steps:
@@ -20,9 +25,17 @@ runs:
     - name: '依赖库安装'
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install pytest==7.3.1
+        pip install pytest-json-report==1.5.0
+        pip install -r requirements.txt        
       shell: bash
         
     - name: '运行单元测试'
-      run: pytest
+      run: pytest --json-report
       shell: bash
+      
+    - name: '上传产物'
+      uses: actions/upload-artifact@v3
+      with:
+        name: '测试报告'
+        path: .report.json
