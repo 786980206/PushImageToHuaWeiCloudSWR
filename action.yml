@@ -6,20 +6,20 @@ inputs:                                                                        #
     required: true                                                             # 是否必填
     default: 3.8                                                               # 默认值
 
-outputs:                                                                       
-  test:
-    description: "test output"
-    value: ${{ steps.make-output.outputs.test }}
+outputs:                                                                       # 定义action输出, 类别我们插件的output, 实际是Job级
+  test:                                                                        # 输出key
+    description: "test output"                                                 # 输出描述
+    value: ${{ steps.make-output.outputs.test }}                               # 输出值来源, 来源于子步骤
 
 runs:
-  using: "composite"
-  steps:
-    - name: '代码下载'
-      uses: actions/checkout@v3
+  using: "composite"                                                           # action类型, 支持组合步骤, docker, node 等类型, 类比我们的插件, 原子插件/组合插件
+  steps:                                                                       # 组合插件步骤编排
+    - name: '代码下载'                                                         # 步骤名称                                                    
+      uses: actions/checkout@v3                                                # 步骤插件
       
     - name: 'python安装'
       uses: actions/setup-python@v4
-      with:
+      with:                                                                     # 步骤插件参数
         python-version: ${{ inputs.python_version }}
         
     - name: '依赖库安装'
@@ -34,13 +34,16 @@ runs:
       run: pytest --json-report
       shell: bash
       
-    - name: '上传产物'
+    - name: '上传产物'                                                           # 上传产物
       uses: actions/upload-artifact@v3
       with:
         name: '测试报告'
         path: .report.json
     
-    - id: make-output
+    - id: make-output                                                           # 步骤输出
       name: '变量输出'
       run: echo "test=hello" >> $GITHUB_OUTPUT
       shell: bash
+
+
+
