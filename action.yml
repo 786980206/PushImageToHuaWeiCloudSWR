@@ -1,15 +1,15 @@
-name: 'pytest单元测试'
-description: '使用pytest框架自动下载代码并进行单元测试'
-inputs:
-  python_version:
-    description: 'pyton版本'
-    required: true
-    default: 3.8
+name: 'pytest单元测试'                                                         # 插件名称
+description: '使用pytest框架自动下载代码并进行单元测试'                         # 插件描述
+inputs:                                                                        # 插件输入定义, 类比我们的低代码界面
+  python_version:                                                              # 输入参数名称     
+    description: 'pyton版本'                                                   # 输出参数描述
+    required: true                                                             # 是否必填
+    default: 3.8                                                               # 默认值
 
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+outputs:                                                                       
+  test:
+    description: "test output"
+    value: ${{ steps.make-output.outputs.test }}
 
 runs:
   using: "composite"
@@ -39,3 +39,7 @@ runs:
       with:
         name: '测试报告'
         path: .report.json
+    
+    - id: make-output
+      name: '变量输出'
+      run: echo "test=hello" >> $GITHUB_OUTPUT
